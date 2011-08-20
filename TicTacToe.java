@@ -85,10 +85,10 @@ boolean dbug = false;
       // FYI, this only works if it is "O's" turn.
 
       int move = 0;
-      move = playWin();
+      move = playWin(true);
 
       if (move == 0) {
-         move = blockWin();
+         move = playWin(false);
       }
 
       if (move == 0) {
@@ -151,69 +151,36 @@ boolean dbug = false;
       return rc;
    }
 
-   public int playWin() {
+   public int playWin(boolean iWin) {
       int rc = 0;
-      rc = lookForPattern(getTurn(true), 2, true, false, true, false, false, false, false, false, false);
-      /*
-         if (lookForPattern('O', 2, true, false, true, false, false, false, false, false, false)) {
-         rc = 2;
-         } 
-       */
 
+      rc = lookForPattern(getTurn(iWin), 3, true, true, false, false, false, false, false, false, false);
       if (rc == 0) {
-         lookForPattern(getTurn(true), 3, true, true, false, false, false, false, false, false, false);
-      }
-      if (rc == 0) {
-         lookForPattern(getTurn(true), 9, true, false, false, false, true, false, false, false, false);
+         rc = 
+            lookForPattern(getTurn(iWin), 9, true, false, false, false, true, false, false, false, false);
       }
 
-      /*
-         if (lookForPattern('O', 3, true, true, false, false, false, false, false, false, false)) {
-         rc = 3;
-         }
-         if (lookForPattern('O', 9, true, false, false, false, true, false, false, false, false)) {
-         rc = 9;
-         }
-       */
-      if (rc > 0) {  
-         winner = "Computer wins!";
+      if (rc == 0) {
+         rc = lookForPattern(getTurn(iWin), 6, false, false, false, true, true, false, false, false, false);
+      }
+      if (rc == 0) {
+         rc = 
+            lookForPattern(getTurn(iWin), 2, true, false, true, false, false, false, false, false, false);
+      }
+      if (rc == 0) {
+         rc = 
+            lookForPattern(getTurn(iWin), 5, true, false, false, false, false, false, false, false, true);
+      }
+      if (rc == 0) {
+         rc = 
+            lookForPattern(getTurn(iWin), 5, false, false, false, true, false, true, false, false, false);
+      }
+
+      if ((rc > 0) && (iWin)) {  
+         winner = getTurn(true) + " wins!";
          gameOver = true;
       }
 
-      return rc;
-   }
-
-   public int blockWin() {
-      int rc = 0;
-
-      rc = lookForPattern(getTurn(false), 3, true, true, false, false, false, false, false, false, false);
-      if (rc == 0) {
-         rc = 
-            lookForPattern(getTurn(false), 9, true, false, false, false, true, false, false, false, false);
-      }
-
-      if (rc == 0) {
-         rc = lookForPattern(getTurn(false), 6, false, false, false, true, true, false, false, false, false);
-         System.out.println("found our block: " +rc);
-      }
-      if (rc == 0) {
-         rc = 
-            lookForPattern(getTurn(false), 2, true, false, true, false, false, false, false, false, false);
-      }
-      /*
-         if (lookForPattern('X', true, true, false, false, false, false, false, false, false)) {
-         return 3;
-         } 
-         else if (lookForPattern('X', true, false, false, false, true, false, false, false, false)) {
-         return 9;
-         }
-         else if (lookForPattern('X', false, false, false, true, true, false, false, false, false)) {
-         return 6;
-         }
-         else if (lookForPattern('X', true, false, true, false, false, false, false, false, false)) {
-         return 2;
-         }
-       */
       return rc;
    }
 
@@ -398,6 +365,7 @@ boolean dbug = false;
       t.move(t.evaluateBestMove());
       t.move(7);
       t.move(t.evaluateBestMove());
+      t.move(6);
 
       System.out.println(t);
    }
