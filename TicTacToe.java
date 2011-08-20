@@ -319,6 +319,7 @@ public class TicTacToe {
                               boolean t7,
                               boolean t8,
                               boolean t9) {
+
       // Okay. We want to look for the given pattern. So we look 8 times:
       // current layout, horiz flip, vert flip, 2 diagonal flips,
       // and 3 rotations.
@@ -359,6 +360,9 @@ public class TicTacToe {
 
    }
 
+   /**
+     * Reverts board from "isomorphic" state to its original board state
+     */
    public void revertBoard() {
       switch (this.boardPosition) {
          case 0:
@@ -382,6 +386,10 @@ public class TicTacToe {
       this.boardPosition = 0;
    }
 
+   /**
+     * Flips board to one of 8 isomorphic positions. We can search for 
+     * different configurations by flipping the board around.
+     */
    public void flipBoard(int position) {
       switch (position) {
          case 0:
@@ -422,6 +430,11 @@ public class TicTacToe {
       boardPosition = position;
    }
 
+   /**
+     * Rotate tic-tac-toe board clockwise. 
+     * 
+     * @param numberRotations How many times we want to rotate the board
+     */
    public void rotateClockwise(int numberRotations) {
       for (int rotation = 0; rotation < numberRotations; rotation++) {
          char[][] newBoard = new char[3][3];
@@ -436,6 +449,9 @@ public class TicTacToe {
       }
    }
 
+   /**
+     * Swaps the positions of two tokens on the board
+     */
    public void swapPositions(int a, int b) {
       a--;
       b--;
@@ -449,7 +465,15 @@ public class TicTacToe {
       board[b_y][b_x] = tmp;
    }
 
+   /**
+     * Takes a game board and converts it to a bitmask, which
+     * makes searching for different configurations easy.
+     *
+     * @param p Bitmask of what kind of pieces - X or O?
+     * @return bitmask representing board state
+     */
    public int boardToBits(char p) {
+      //TODO: Make this function lossless for both X and O information.
       int pattern = 0;
 
       for (int i = 0; i < 9; i++) { 
@@ -463,12 +487,41 @@ public class TicTacToe {
       return pattern;
    }
 
+   /**
+     * Gets token on board at a given position
+     *
+     * @param p Position we want token of. Alternately, position of which we
+     *          want the token, if you have a perscriptivist aversion to 
+     *          stranded prepositions.
+     */
    public char getPos(int p) {
       p--;
       int x = p%3;
       int y = p/3;
 
       return board[y][x];
+   }
+
+
+   public String toString() {
+      String s = ("%c|%c|%c\n" +
+                  "-----\n"    +
+                  "%c|%c|%c\n" +
+                  "-----\n"    +
+                  "%c|%c|%c\n\n\nTurn: %d");
+
+      return String.format  (s, 
+            board[0][0],
+            board[0][1],
+            board[0][2],
+            board[1][0],
+            board[1][1],
+            board[1][2],
+            board[2][0],
+            board[2][1],
+            board[2][2],
+            this.turn
+            );
    }
 
    public static void main(String[] args) {
@@ -485,27 +538,6 @@ public class TicTacToe {
       t.move(t.evaluateBestMove());
 
       System.out.println(t);
-   }
-
-   public String toString() {
-      String s =       ("%c|%c|%c\n" +
-            "-----\n"    +
-            "%c|%c|%c\n" +
-            "-----\n"    +
-            "%c|%c|%c\n\n\nTurn: %d");
-
-      return String.format  (s, 
-            board[0][0],
-            board[0][1],
-            board[0][2],
-            board[1][0],
-            board[1][1],
-            board[1][2],
-            board[2][0],
-            board[2][1],
-            board[2][2],
-            this.turn
-            );
    }
 
 }
