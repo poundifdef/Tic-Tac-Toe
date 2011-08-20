@@ -363,22 +363,15 @@ boolean dbug = false;
 
    public static void main(String[] args) {
       TicTacToe t = new TicTacToe();
-      /*
-         t.move(1);
-         t.move(t.evaluateBestMove());
-         t.move(7);
-         t.move(t.evaluateBestMove());
-         t.move(6);
-         t.move(t.evaluateBestMove());
-       */
+      t.move(1);
       t.move(t.evaluateBestMove());
+      t.move(6);
       t.move(t.evaluateBestMove());
+
+      t.move(4);
       t.move(t.evaluateBestMove());
-      t.move(t.evaluateBestMove());
-      t.move(t.evaluateBestMove());
-      t.move(t.evaluateBestMove());
-      t.move(t.evaluateBestMove());
-      t.move(t.evaluateBestMove());
+
+      t.move(3);
       t.move(t.evaluateBestMove());
 
       System.out.println(t);
