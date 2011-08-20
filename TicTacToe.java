@@ -16,14 +16,15 @@ public class TicTacToe {
    // which turn are we on?
    private int turn; 
 
-   // TODO: getWinner() instead.
-   String winner = "Tie";
-
    // Has the game ended?
    private boolean gameOver = false;
 
-   // Is there a winner?
-   private boolean hasWinner = false;
+   // Turn on which we found a winner.
+   private int hasWinner = 0;
+
+   public boolean isGameOver() {
+      return gameOver;
+   }
 
    public TicTacToe() {
       // initialize empty board, empty spaces having ' ' character.
@@ -92,9 +93,8 @@ public class TicTacToe {
       }
 
       // someone has won, game is over
-      if (hasWinner) {
+      if (hasWinner > 0) {
          gameOver = true;
-         System.out.println(winner);
       }
 
       return true;
@@ -284,12 +284,18 @@ public class TicTacToe {
       }
 
       if ((rc > 0) && (iWin)) {  
-         //TODO replace with getWinner() method
-         winner = getTurn(true) + " wins!";
-         hasWinner = true;
+         hasWinner = turn;
       }
 
       return rc;
+   }
+
+   public char getWinner() {
+      if (hasWinner > 0) {
+         return (hasWinner%2 == 0) ? 'X' : 'O';
+      }
+
+      return ' ';
    }
 
    /**
@@ -536,6 +542,14 @@ public class TicTacToe {
 
       t.move(3);
       t.move(t.evaluateBestMove());
+
+      if (t.isGameOver()) {
+         System.out.print("Winner: ");
+         if (t.getWinner() == ' ')
+            System.out.println("Tie");
+         else
+            System.out.println(t.getWinner());
+      }
 
       System.out.println(t);
    }
