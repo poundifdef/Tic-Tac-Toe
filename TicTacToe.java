@@ -120,7 +120,22 @@ boolean dbug = false;
       }
 
       public int playFork() {
-         return lookForPattern(getTurn(true), 9, true, false, false, false, false, false, false, false, false);
+         int rc = 0;
+         rc = lookForPattern(getTurn(true), 7, true, false, true, false, false, false, false, false, false);
+   
+         if (rc == 0) {
+            rc = lookForPattern(getTurn(true), 5, true, false, true, false, false, false, false, false, false);
+         }
+
+         if (rc == 0) {
+            rc = lookForPattern(getTurn(true), 3, true, false, false, false, true, false, false, false, false);
+         }
+
+         if (rc == 0) {
+            rc = lookForPattern(getTurn(true), 3, true, false, false, false, false, false, false, false, true);
+         }
+
+         return rc;
       }
 
       public int playOppositeCorner() {
@@ -295,7 +310,6 @@ boolean dbug = false;
       }
 
       boardPosition = position;
-      //boardPosition ^= position;
    }
 
    public void rotateClockwise(int numberRotations) {
@@ -357,15 +371,15 @@ boolean dbug = false;
          t.move(6);
          t.move(t.evaluateBestMove());
        */
-      t.move(1);
       t.move(t.evaluateBestMove());
-      t.move(3);
       t.move(t.evaluateBestMove());
-      t.move(8);
       t.move(t.evaluateBestMove());
-      t.move(7);
       t.move(t.evaluateBestMove());
-      t.move(6);
+      t.move(t.evaluateBestMove());
+      t.move(t.evaluateBestMove());
+      t.move(t.evaluateBestMove());
+      t.move(t.evaluateBestMove());
+      t.move(t.evaluateBestMove());
 
       System.out.println(t);
    }
