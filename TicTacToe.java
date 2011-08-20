@@ -8,21 +8,23 @@ public class TicTacToe {
    //      -----
    //      7|8|9
    //
-   char board[][]; 
+   private char board[][]; 
 
    // the current board "orientation", used to detect isomorphic boards
-   int boardPosition;
+   private int boardPosition;
 
    // which turn are we on?
-   int turn; 
+   private int turn; 
 
+   // TODO: getWinner() instead.
    String winner = "Tie";
 
-   boolean gameOver = false;
-
-boolean dbug = false;
+   // Has the game ended?
+   private boolean gameOver = false;
+   private boolean hasWinner = false;
 
    public TicTacToe() {
+      // initialize empty board, empty spaces having ' ' character.
       board = new char[3][3];
 
       for (int i = 0; i < 3; i++) {
@@ -31,20 +33,36 @@ boolean dbug = false;
          }
       }
 
+      // At the "0th", or non-rotated board position
       boardPosition = 0;
+
+      // First person's turn!
       turn = 0;
    }
 
+   /**
+     * Places a piece on the board at the specificed position. 
+     * Either an X or an O is played, depending on whose turn it is.
+     * X always goes first.
+     *
+     * @param p Place where we want to make our move; integer [1..9]
+     * @return true if move was successful, false if not (eg, tried to move to
+     *         a spot already taken.)
+     */
    public boolean move(int p) {
-      // if p == 0 then we have a problem!
-
+      if (gameOver) {
+         // the game is over, stop trying to make moves!
+         return false;
+      }
       if (p == 0) {
-         System.out.println("could not find move");
+         System.out.println("Could not find valid move!");
          return false;
       }
 
       // 0-based indexing is easier.
       p--;
+
+      // Get x and y array coords of board position
       int x = p%3;
       int y = p/3;
 
@@ -55,27 +73,24 @@ boolean dbug = false;
       }
 
       // whose turn is it?
-      char token = 'O';
-      if (turn%2 == 0) {
-         token = 'X';
-      }
+      char token = getTurn(true);
 
       // set the board
       board[y][x] = token;
 
-    // set it to its un-isomorphic original state
+      // set it to its un-isomorphic original state after making move
       revertBoard();
-      //flipBoard(boardPosition);
 
       // next player's turn!
       turn++;
+
       if (turn == 9) {
          gameOver = true;
       }
 
-      if (gameOver) {
+      if (hasWinner) {
+         gameOver = true;
          System.out.println(winner);
-         return false;
       }
 
       return true;
@@ -193,7 +208,7 @@ boolean dbug = false;
 
       if ((rc > 0) && (iWin)) {  
          winner = getTurn(true) + " wins!";
-         gameOver = true;
+         hasWinner = true;
       }
 
       return rc;
@@ -229,8 +244,6 @@ boolean dbug = false;
 
       for (int i = 0; i < 8; i++) {
          flipBoard(i);
-         if (dbug)
-            System.out.println(this);
          boolean foundMatch = (pattern ^ (boardToBits(t)&pattern)) == 0;
          if (foundMatch) {
             if (getPos(position) == ' ') {
