@@ -21,6 +21,8 @@ public class TicTacToe {
 
    // Has the game ended?
    private boolean gameOver = false;
+
+   // Is there a winner?
    private boolean hasWinner = false;
 
    public TicTacToe() {
@@ -41,14 +43,14 @@ public class TicTacToe {
    }
 
    /**
-     * Places a piece on the board at the specificed position. 
-     * Either an X or an O is played, depending on whose turn it is.
-     * X always goes first.
-     *
-     * @param p Place where we want to make our move; integer [1..9]
-     * @return true if move was successful, false if not (eg, tried to move to
-     *         a spot already taken.)
-     */
+    * Places a piece on the board at the specificed position. 
+    * Either an X or an O is played, depending on whose turn it is.
+    * X always goes first.
+    *
+    * @param p Place where we want to make our move; integer [1..9]
+    * @return true if move was successful, false if not (eg, tried to move to
+    *         a spot already taken.)
+    */
    public boolean move(int p) {
       if (gameOver) {
          // the game is over, stop trying to make moves!
@@ -84,10 +86,12 @@ public class TicTacToe {
       // next player's turn!
       turn++;
 
+      // filled up the board, game is over
       if (turn == 9) {
          gameOver = true;
       }
 
+      // someone has won, game is over
       if (hasWinner) {
          gameOver = true;
          System.out.println(winner);
@@ -96,33 +100,54 @@ public class TicTacToe {
       return true;
    }
 
-   public int evaluateBestMove() {
-      // FYI, this only works if it is "O's" turn.
 
+   /**
+    * Determines the next optimal move for the current player.
+    * This basically uses the strategy outlined here:
+    * http://en.wikipedia.org/wiki/Tic-tac-toe#Strategy
+    *
+    * @return Board position of where the next move should be made.
+    *         Returns 0 if no optimal move is found (which would be a bug.)
+    */
+   public int evaluateBestMove() {
       int move = 0;
+
+      // First try to win
       move = playWin(true);
 
+      // Otherwise, block opponent's win
       if (move == 0) {
          move = playWin(false);
       }
 
+      // Try to create a fork scenario, where we could win two ways
       if (move == 0) {
          move = playFork();
       }
+
+      // If opponent is about to have a fork, block it!
       if (move == 0) {
          move = blockFork();
       }
+
+      // Play the center, if we can
       if (move == 0) {
          if (getPos(5) == ' ') {
             move = 5;
          }
       }
+
+      // Play a corner opposite opponent, if we can
       if (move == 0) {
          move = playOppositeCorner();
       }
+
+      // Play just any corner
       if (move == 0) {
          move = playEmptyCorner();
       }
+
+      // Or play a side
       if (move == 0) {
          move = playEmptySide();
       }
@@ -130,40 +155,55 @@ public class TicTacToe {
       return move; //bad if move == 0
    }
 
-      char getTurn(boolean thisPlayer) {
-         return ((turn%2 == 0) == thisPlayer) ? 'X' : 'O';
+   /**
+     * Returns the token {X, O} of either the current player or the opponent.
+     *
+     * @param thisPlayer Whether we want the token of ourselves (true) or the
+     *                   opponent (false)
+     */
+   char getTurn(boolean thisPlayer) {
+      return ((turn%2 == 0) == thisPlayer) ? 'X' : 'O';
+   }
+
+   /**
+     * Attempt to find and play a "fork"
+     *
+     * @return The board position for an optimal fork move to make. 
+     *         returns 0 if none exists.
+     */
+   public int playFork() {
+      int rc = 0;
+
+      // Look for different board positions which could give us a fork.
+
+      rc = lookForPattern(getTurn(true), 7, true, false, true, false, false, false, false, false, false);
+
+      if (rc == 0) {
+         rc = lookForPattern(getTurn(true), 5, true, false, true, false, false, false, false, false, false);
       }
 
-      public int playFork() {
-         int rc = 0;
-         rc = lookForPattern(getTurn(true), 7, true, false, true, false, false, false, false, false, false);
-   
-         if (rc == 0) {
-            rc = lookForPattern(getTurn(true), 5, true, false, true, false, false, false, false, false, false);
-         }
-
-         if (rc == 0) {
-            rc = lookForPattern(getTurn(true), 3, true, false, false, false, true, false, false, false, false);
-         }
-
-         if (rc == 0) {
-            rc = lookForPattern(getTurn(true), 3, true, false, false, false, false, false, false, false, true);
-         }
-
-         return rc;
+      if (rc == 0) {
+         rc = lookForPattern(getTurn(true), 3, true, false, false, false, true, false, false, false, false);
       }
 
-      public int playOppositeCorner() {
-         return lookForPattern(getTurn(false), 9, true, false, false, false, false, false, false, false, false);
+      if (rc == 0) {
+         rc = lookForPattern(getTurn(true), 3, true, false, false, false, false, false, false, false, true);
       }
 
-      public int playEmptyCorner() {
-         return lookForPattern(getTurn(false), 1, false, false, false, false, false, false, false, false, false);
-      }
+      return rc;
+   }
 
-      public int playEmptySide() {
-         return lookForPattern(getTurn(false), 2, false, false, false, false, false, false, false, false, false);
-      }
+   public int playOppositeCorner() {
+      return lookForPattern(getTurn(false), 9, true, false, false, false, false, false, false, false, false);
+   }
+
+   public int playEmptyCorner() {
+      return lookForPattern(getTurn(false), 1, false, false, false, false, false, false, false, false, false);
+   }
+
+   public int playEmptySide() {
+      return lookForPattern(getTurn(false), 2, false, false, false, false, false, false, false, false, false);
+   }
 
    public int blockFork() {
       int rc = 0;
@@ -268,7 +308,6 @@ public class TicTacToe {
          case 2:
          case 3:
          case 4:
-            //System.out.println("reverted: " + this.boardPosition);
             flipBoard(this.boardPosition);
             break;
          case 5:
