@@ -193,18 +193,42 @@ public class TicTacToe {
       return rc;
    }
 
+   /**
+     * Attempt to find and play a corner opposite opponent
+     *
+     * @return The board position for an optimal fork move to make. 
+     *         returns 0 if none exists.
+     */
    public int playOppositeCorner() {
       return lookForPattern(getTurn(false), 9, true, false, false, false, false, false, false, false, false);
    }
 
+   /**
+     * Attempt to find and play any corner
+     *
+     * @return The board position for an optimal fork move to make. 
+     *         returns 0 if none exists.
+     */
    public int playEmptyCorner() {
       return lookForPattern(getTurn(false), 1, false, false, false, false, false, false, false, false, false);
    }
 
+   /**
+     * Attempt to find and play any side
+     *
+     * @return The board position for an optimal fork move to make. 
+     *         returns 0 if none exists.
+     */
    public int playEmptySide() {
       return lookForPattern(getTurn(false), 2, false, false, false, false, false, false, false, false, false);
    }
 
+   /**
+     * Attempt to find and and block an opportunity for opponent to create a fork
+     *
+     * @return The board position for an optimal fork move to make. 
+     *         returns 0 if none exists.
+     */
    public int blockFork() {
       int rc = 0;
 
@@ -221,6 +245,19 @@ public class TicTacToe {
       return rc;
    }
 
+   /**
+     * Attempt to find and play in a position which would result in a win.
+     * used by both player and opponent to either win or block a win.
+     *
+     * @param iWin true if I am looking for a way to win. false if I seek to
+     *             block the opponent from an impending win. The stragety to 
+     *             find the "winning" position is the same, the only question
+     *             is whether we're looking for a win for ourselves or for
+     *             the opponent.
+     *
+     * @return The board position for an optimal fork move to make. 
+     *         returns 0 if none exists.
+     */
    public int playWin(boolean iWin) {
       int rc = 0;
 
@@ -247,6 +284,7 @@ public class TicTacToe {
       }
 
       if ((rc > 0) && (iWin)) {  
+         //TODO replace with getWinner() method
          winner = getTurn(true) + " wins!";
          hasWinner = true;
       }
@@ -254,23 +292,40 @@ public class TicTacToe {
       return rc;
    }
 
-   public int lookForPattern(char t, 
-         int position,
-         boolean t1,
-         boolean t2,
-         boolean t3,
-         boolean t4,
-         boolean t5,
-         boolean t6,
-         boolean t7,
-         boolean t8,
-         boolean t9) {
-      // Okay. We want to look for the given pattern. So we look 5 times:
-      // current layout, horiz flip, vert flip, and 2 diagonal flips.
+   /**
+     * Looks for a particular pattern on the board and sees if a desired move
+     * is legal. If so, we return that board position. Otherwise we return 0.
+     * This code searches all isomorphic board variations for the given pattern.
+     * 
+     * @param t Which token we're looking for with our pattern. Are we searching
+     *          for X or O pieces with this pattern?
+     * @param position If we find this pattern, this is the position we want to 
+     *                 play as a result. If that position is not available, 
+     *                 then that "pattern" does not exist and we move to the
+     *                 next one.
+     * @param t1..t9 basically a "a bitmask of positions". Do we want a token
+     *               to be in position 1? Then set t1 = true. Etc.
+     * @return Board position to place a token. 0 if our desired position is 
+     *         invalid (beacuse someone else has already moved there.)
+     */
+   public int lookForPattern( char t, 
+                              int position,
+                              boolean t1,
+                              boolean t2,
+                              boolean t3,
+                              boolean t4,
+                              boolean t5,
+                              boolean t6,
+                              boolean t7,
+                              boolean t8,
+                              boolean t9) {
+      // Okay. We want to look for the given pattern. So we look 8 times:
+      // current layout, horiz flip, vert flip, 2 diagonal flips,
+      // and 3 rotations.
 
-      // To make this easier, we coerce our current board and the pattern
+      // To make this easier, we coerce both our current board and the pattern
       // we're looking for into a bit mask. Then we can xor to see if there
-      // is a match. You can tell I'm really a C guy at heart.
+      // is a match. You can tell I'm a C guy at heart.
       int pattern = 0;
       pattern |= (1 & (t1 ? 1 : 0)) << 0;
       pattern |= (1 & (t2 ? 1 : 0)) << 1;
@@ -282,17 +337,20 @@ public class TicTacToe {
       pattern |= (1 & (t8 ? 1 : 0)) << 7;
       pattern |= (1 & (t9 ? 1 : 0)) << 8;
 
+      // loop through each of the 8 isomorphic board configurations to search
+      // for our pattern
       for (int i = 0; i < 8; i++) {
+         // Flip the board to a different configuration, to search
          flipBoard(i);
+
+         // Have we found our pattern?
          boolean foundMatch = (pattern ^ (boardToBits(t)&pattern)) == 0;
-         if (foundMatch) {
-            if (getPos(position) == ' ') {
-               return position;
-            }  else {      
-               revertBoard();
-            }
+
+         // If so, is our desired space empty?
+         if (foundMatch && (getPos(position) == ' ')) {
+            return position;
          } else {
-            // return board to original state
+            // return board to original state, loop to next board position
             revertBoard();
          }
       }
