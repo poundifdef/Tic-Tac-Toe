@@ -1,5 +1,8 @@
 Tic Tac Toe game. You should never win :)
 
+In fact, this game should always tie unless you make a mistake. If you find 
+a scenario where the computer could have made a better move, let me know!
+
 Everything you need is in TicTacToe.java; no need to scour 10 directories
 of beautifully abstracted code to wrap your head around a tic tac toe game!
 Look at its main() method to see the mechanics of game play.
