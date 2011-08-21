@@ -1,3 +1,5 @@
+package tictactoe;
+
 public class TicTacToe {
 
    // 3x3 array of tic tac toe board
