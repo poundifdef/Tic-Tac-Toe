@@ -1,5 +1,3 @@
-package tictactoe;
-
 public class TicTacToe {
 
    // 3x3 array of tic tac toe board
@@ -60,7 +58,6 @@ public class TicTacToe {
          return false;
       }
       if (p == 0) {
-         System.out.println("Could not find valid move!");
          return false;
       }
 
@@ -178,18 +175,21 @@ public class TicTacToe {
 
       // Look for different board positions which could give us a fork.
 
-      rc = lookForPattern(getTurn(true), 7, true, false, true, false, false, false, false, false, false);
+      rc = lookForPattern(getTurn(true), new int[] {7, 2, 3}, true, false, true, false, false, false, false, false, false);
 
       if (rc == 0) {
-         rc = lookForPattern(getTurn(true), 5, true, false, true, false, false, false, false, false, false);
+         rc = lookForPattern(getTurn(true), new int[] {5, 7, 9}, true, false, true, false, false, false, false, false, false);
       }
 
       if (rc == 0) {
-         rc = lookForPattern(getTurn(true), 3, true, false, false, false, true, false, false, false, false);
+         rc = lookForPattern(getTurn(true), new int[] {3, 7, 9}, true, false, false, false, true, false, false, false, false);
       }
-
+      
       if (rc == 0) {
-         rc = lookForPattern(getTurn(true), 3, true, false, false, false, false, false, false, false, true);
+         rc = lookForPattern(getTurn(true), new int[] {3,2,7}, true, false, false, false, true, false, false, false, false);
+      }
+      if (rc == 0) {
+         rc = lookForPattern(getTurn(true), new int[] {3, 2, 4}, true, false, false, false, false, false, false, false, true);
       }
 
       return rc;
@@ -300,6 +300,26 @@ public class TicTacToe {
       return ' ';
    }
 
+   public int lookForPattern( char t, 
+                              int position,
+                              boolean t1,
+                              boolean t2,
+                              boolean t3,
+                              boolean t4,
+                              boolean t5,
+                              boolean t6,
+                              boolean t7,
+                              boolean t8,
+                              boolean t9) {
+
+      
+      int[] inputPosition = new int[1];
+      inputPosition[0] = position;
+      
+
+      return lookForPattern(t,inputPosition, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+   }
+
    /**
      * Looks for a particular pattern on the board and sees if a desired move
      * is legal. If so, we return that board position. Otherwise we return 0.
@@ -317,7 +337,7 @@ public class TicTacToe {
      *         invalid (beacuse someone else has already moved there.)
      */
    public int lookForPattern( char t, 
-                              int position,
+                              int[] positions,
                               boolean t1,
                               boolean t2,
                               boolean t3,
@@ -349,28 +369,35 @@ public class TicTacToe {
       // loop through each of the 8 isomorphic board configurations to search
       // for our pattern
       for (int i = 0; i < 8; i++) {
-         // Flip the board to a different configuration, to search
          flipBoard(i);
-
-         // Have we found our pattern?
          boolean foundMatch = (pattern ^ (boardToBits(t)&pattern)) == 0;
-
-         // If so, is our desired space empty?
-         if (foundMatch && (getPos(position) == ' ')) {
-            return position;
+         if (foundMatch) {
+            for (int position : positions) {
+               if (getPos(position) != ' ') {
+                  foundMatch = false;
+                  revertBoard();
+                  break;
+               } 
+            }
+            if (foundMatch) {
+               return positions[0];
+            }
          } else {
-            // return board to original state, loop to next board position
             revertBoard();
+         }
+
+         if (foundMatch) {
+            break;
          }
       }
 
       return 0;
-
    }
 
+
    /**
-     * Reverts board from "isomorphic" state to its original board state
-     */
+    * Reverts board from "isomorphic" state to its original board state
+    */
    public void revertBoard() {
       switch (this.boardPosition) {
          case 0:
@@ -395,9 +422,9 @@ public class TicTacToe {
    }
 
    /**
-     * Flips board to one of 8 isomorphic positions. We can search for 
-     * different configurations by flipping the board around.
-     */
+    * Flips board to one of 8 isomorphic positions. We can search for 
+    * different configurations by flipping the board around.
+    */
    public void flipBoard(int position) {
       switch (position) {
          case 0:
@@ -439,10 +466,10 @@ public class TicTacToe {
    }
 
    /**
-     * Rotate tic-tac-toe board clockwise. 
-     * 
-     * @param numberRotations How many times we want to rotate the board
-     */
+    * Rotate tic-tac-toe board clockwise. 
+    * 
+    * @param numberRotations How many times we want to rotate the board
+    */
    public void rotateClockwise(int numberRotations) {
       for (int rotation = 0; rotation < numberRotations; rotation++) {
          char[][] newBoard = new char[3][3];
@@ -458,8 +485,8 @@ public class TicTacToe {
    }
 
    /**
-     * Swaps the positions of two tokens on the board
-     */
+    * Swaps the positions of two tokens on the board
+    */
    public void swapPositions(int a, int b) {
       a--;
       b--;
@@ -474,12 +501,12 @@ public class TicTacToe {
    }
 
    /**
-     * Takes a game board and converts it to a bitmask, which
-     * makes searching for different configurations easy.
-     *
-     * @param p Bitmask of what kind of pieces - X or O?
-     * @return bitmask representing board state
-     */
+    * Takes a game board and converts it to a bitmask, which
+    * makes searching for different configurations easy.
+    *
+    * @param p Bitmask of what kind of pieces - X or O?
+    * @return bitmask representing board state
+    */
    public int boardToBits(char p) {
       //TODO: Make this function lossless for both X and O information.
       int pattern = 0;
@@ -496,12 +523,12 @@ public class TicTacToe {
    }
 
    /**
-     * Gets token on board at a given position
-     *
-     * @param p Position we want token of. Alternately, position of which we
-     *          want the token, if you have a perscriptivist aversion to 
-     *          stranded prepositions.
-     */
+    * Gets token on board at a given position
+    *
+    * @param p Position we want token of. Alternately, position of which we
+    *          want the token, if you have a perscriptivist aversion to 
+    *          stranded prepositions.
+    */
    public char getPos(int p) {
       p--;
       int x = p%3;
@@ -513,10 +540,10 @@ public class TicTacToe {
 
    public String toString() {
       String s = ("%c|%c|%c\n" +
-                  "-----\n"    +
-                  "%c|%c|%c\n" +
-                  "-----\n"    +
-                  "%c|%c|%c\n\n\nTurn: %d");
+            "-----\n"    +
+            "%c|%c|%c\n" +
+            "-----\n"    +
+            "%c|%c|%c\n\n\nTurn: %d");
 
       return String.format  (s, 
             board[0][0],
@@ -534,15 +561,11 @@ public class TicTacToe {
 
    public static void main(String[] args) {
       TicTacToe t = new TicTacToe();
-      t.move(1);
       t.move(t.evaluateBestMove());
-      t.move(6);
+      t.move(2);
       t.move(t.evaluateBestMove());
+      t.move(9);
 
-      t.move(4);
-      t.move(t.evaluateBestMove());
-
-      t.move(3);
       t.move(t.evaluateBestMove());
 
       if (t.isGameOver()) {
