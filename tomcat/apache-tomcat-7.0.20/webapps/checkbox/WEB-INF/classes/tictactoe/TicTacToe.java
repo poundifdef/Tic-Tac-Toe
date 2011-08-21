@@ -1,3 +1,5 @@
+package tictactoe;
+
 public class TicTacToe {
 
    // 3x3 array of tic tac toe board
@@ -122,13 +124,11 @@ public class TicTacToe {
 
       // Try to create a fork scenario, where we could win two ways
       if (move == 0) {
-         System.out.println("try fork");
          move = playFork();
       }
 
       // If opponent is about to have a fork, block it!
       if (move == 0) {
-         System.out.println("try block fork");
          move = blockFork();
       }
 
@@ -534,11 +534,15 @@ public class TicTacToe {
 
    public static void main(String[] args) {
       TicTacToe t = new TicTacToe();
+      t.move(1);
       t.move(t.evaluateBestMove());
-      t.move(2);
+      t.move(6);
       t.move(t.evaluateBestMove());
-      t.move(9);
 
+      t.move(4);
+      t.move(t.evaluateBestMove());
+
+      t.move(3);
       t.move(t.evaluateBestMove());
 
       if (t.isGameOver()) {
