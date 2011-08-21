@@ -1,1 +1,11 @@
-Tic Tac Toe game.
+Tic Tac Toe game. You should never win :)
+
+Everything you need is in TicTacToe.java; no need to scour 10 directories
+of beautifully abstracted code to wrap your head around a tic tac toe game!
+Look at its main() method to see the mechanics of game play.
+
+tictactoe_tomcat/ is a small web wrapper around the TicTacToe engine.
+You can play against it here: http://a9e184f7.dotcloud.com/tictactoe/
+
+The solution here is a little more brute-forcy (and maybe a little less mathy)
+than I'd like; if you have suggestions, I'd love to see a patch!
