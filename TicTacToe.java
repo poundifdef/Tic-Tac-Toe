@@ -244,6 +244,10 @@ public class TicTacToe {
          rc = lookForPattern(getTurn(false), 2, true, false, true, false, false, false, false, false, false);
       }
 
+      if (rc == 0) {
+         rc = lookForPattern(getTurn(false), 3, false, true, false, false, false, true, false, false, false);
+      }
+
       return rc;
    }
 
@@ -561,12 +565,16 @@ public class TicTacToe {
 
    public static void main(String[] args) {
       TicTacToe t = new TicTacToe();
+      t.move(6);
+      t.move(t.evaluateBestMove());
+      t.move(8);
+      t.move(t.evaluateBestMove());
+      t.move(1);
+      t.move(t.evaluateBestMove());
+      t.move(7);
       t.move(t.evaluateBestMove());
       t.move(2);
-      t.move(t.evaluateBestMove());
-      t.move(9);
 
-      t.move(t.evaluateBestMove());
 
       if (t.isGameOver()) {
          System.out.print("Winner: ");
