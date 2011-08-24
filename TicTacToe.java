@@ -1,5 +1,7 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.TreeSet;
+import java.util.TreeMap;
 
 public class TicTacToe {
 
@@ -46,15 +48,16 @@ public class TicTacToe {
    }
 
    public int findWinner(boolean isMe) {
-      //TODO use isMe
       char player = getTurn(isMe);
       List<Integer> possiblePositions = findPosition(player, 2);
 
       if (possiblePositions.size() > 0) {
-         return possiblePositions.get(0);
+         for (int position : winningMoves[possiblePositions.get(0)]) {
+            if (board[position] == ' ') return position;
+         }
       }
 
-      return 0;
+      return -1;
    }
 
    public char getTurn(boolean thisPlayer) {
@@ -104,24 +107,54 @@ public class TicTacToe {
             if (board[8] == ' ') return 8;
          }
       }
-      return 0;
+      return -1;
    }
 
    public int generalStrategy() {
-      return 0;
+      int rc = -1;
+      if (board[4] == ' ') return 4;
+
+      for (int i = 0; i < winningMoves.length; i++) {
+         int[] winningMove = winningMoves[i];
+         if (board[winningMove[0]] == getTurn(false) ||
+             board[winningMove[1]] == getTurn(false) ||
+             board[winningMove[2]] == getTurn(false)) {
+
+            continue;
+
+         }
+
+         for (int move : winningMove) {
+            if (move%2 == 0 && board[move] == ' ') {
+               return move;
+            }
+         }
+         
+            
+      }
+
+      if (rc < 0) {
+         for (int i = 0; i < board.length; i++) {
+            if (board[i] == ' ') {
+               return i;
+            }
+         }
+      }
+
+      return rc;
    }
 
    public int getStrategicMove() {
-      int rc = 0;
+      int rc = -1;
       rc = findWinner(true);
 
-      if (rc == 0) {
+      if (rc < 0) {
          rc = findWinner(false);
       }
-      if (rc == 0) {
+      if (rc < 0) {
          rc = avoidCornerTrap();
       }
-      if (rc == 0) {
+      if (rc < 0) {
          rc = generalStrategy();
       }
 
@@ -134,11 +167,17 @@ public class TicTacToe {
       boolean rc = false;
 
       TicTacToe t = new TicTacToe();
-      t.move(8);
-      t.move(5);
-      t.move(2);
 
+      t.move(8);
       rc = t.move(t.getStrategicMove());
+      t.move(2);
+      rc = t.move(t.getStrategicMove());
+      t.move(9);
+      rc = t.move(t.getStrategicMove());
+      t.move(6);
+      rc = t.move(t.getStrategicMove());
+      t.move(3);
+
       System.out.println(rc);
       //System.out.println(t.getStrategicMove());
 
