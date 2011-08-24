@@ -1,8 +1,3 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.TreeSet;
-import java.util.TreeMap;
-
 public class TicTacToe {
 
       int[][] winningMoves; 
@@ -29,8 +24,7 @@ public class TicTacToe {
       winningMoves[7] = new int[] {3,4,5};
    }
 
-   public List<Integer> findPosition(char player, int numMatching) {
-      ArrayList<Integer> rc = new ArrayList<Integer>();
+   public int findPosition(char player, int numMatching) {
       if (numMatching == 2) {
          for (int i = 0; i < winningMoves.length; i++) { 
             int[] winningMove = winningMoves[i];
@@ -39,20 +33,20 @@ public class TicTacToe {
                 (board[winningMove[1]] == player && board[winningMove[2]] == player && board[winningMove[0]] == ' ') ||
                 (board[winningMove[0]] == player && board[winningMove[2]] == player && board[winningMove[1]] == ' '))
                 {
-                  rc.add(i);
+                  return i;
                 }
          }
       }
 
-      return rc;
+      return -1;
    }
 
    public int findWinner(boolean isMe) {
       char player = getTurn(isMe);
-      List<Integer> possiblePositions = findPosition(player, 2);
+      int possiblePosition = findPosition(player, 2);
 
-      if (possiblePositions.size() > 0) {
-         for (int position : winningMoves[possiblePositions.get(0)]) {
+      if (possiblePosition >= 0) {
+         for (int position : winningMoves[possiblePosition]) {
             if (board[position] == ' ') return position;
          }
       }
@@ -125,7 +119,7 @@ public class TicTacToe {
          }
 
          for (int move : winningMove) {
-            if (move%2 == 0 && board[move] == ' ') {
+            if (move%2 == 1 && board[move] == ' ') {
                return move;
             }
          }
@@ -168,18 +162,19 @@ public class TicTacToe {
 
       TicTacToe t = new TicTacToe();
 
-      t.move(8);
+      rc = t.move(6);
       rc = t.move(t.getStrategicMove());
-      t.move(2);
+      rc = t.move(9);
       rc = t.move(t.getStrategicMove());
-      t.move(9);
+      rc = t.move(2);
       rc = t.move(t.getStrategicMove());
-      t.move(6);
+      rc = t.move(3);
       rc = t.move(t.getStrategicMove());
-      t.move(3);
+      rc = t.move(8);
+/*
+      rc = t.move(t.getStrategicMove());
+*/
 
-      System.out.println(rc);
-      //System.out.println(t.getStrategicMove());
 
       System.out.println(t);
    }
