@@ -1,7 +1,8 @@
 public class TicTacToe {
 
       int[][] winningMoves; 
-      char[] board; 
+      char[]  board; 
+      int[] transformedPositions = new int[] {7,0,5,2,4,6,3,8,1};
 
       int turn;
 
@@ -59,7 +60,15 @@ public class TicTacToe {
    }
 
    public boolean move(int position) {
-      position--;
+      return moveInternal(transformedPositions[position-1]);
+   }
+
+   public boolean moveStrategic() {
+      return moveInternal(getStrategicMove());
+   }
+
+   private boolean moveInternal(int position) {
+      //position--;
 
       if (board[position] == ' ') {
          board[position] = getTurn(true);
@@ -153,7 +162,7 @@ public class TicTacToe {
       }
 
       // this is like our only public method, so we need to add the "+1" back in
-      return rc + 1;
+      return rc;
    }
 
    public static void main(String args[]) {
@@ -162,19 +171,15 @@ public class TicTacToe {
 
       TicTacToe t = new TicTacToe();
 
-      rc = t.move(6);
-      rc = t.move(t.getStrategicMove());
-      rc = t.move(9);
-      rc = t.move(t.getStrategicMove());
-      rc = t.move(2);
-      rc = t.move(t.getStrategicMove());
       rc = t.move(3);
-      rc = t.move(t.getStrategicMove());
+      rc = t.moveStrategic();
       rc = t.move(8);
-/*
-      rc = t.move(t.getStrategicMove());
-*/
-
+      rc = t.moveStrategic();
+      rc = t.move(9);
+      rc = t.moveStrategic();
+      rc = t.move(4);
+      rc = t.moveStrategic();
+      rc = t.move(1);
 
       System.out.println(t);
    }
