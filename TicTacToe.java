@@ -94,12 +94,35 @@ public class TicTacToe {
             );  
    }   
 
+   public int avoidCornerTrap() {
+      if ((board[1] == getTurn(false) && board[7] == getTurn(false)) ||
+          (board[3] == getTurn(false) && board[5] == getTurn(false))) {
+         if (board[4] == getTurn(true)) {
+            if (board[0] == ' ') return 0;
+            if (board[6] == ' ') return 6;
+            if (board[2] == ' ') return 7;
+            if (board[8] == ' ') return 8;
+         }
+      }
+      return 0;
+   }
+
+   public int generalStrategy() {
+      return 0;
+   }
+
    public int getStrategicMove() {
       int rc = 0;
       rc = findWinner(true);
 
       if (rc == 0) {
          rc = findWinner(false);
+      }
+      if (rc == 0) {
+         rc = avoidCornerTrap();
+      }
+      if (rc == 0) {
+         rc = generalStrategy();
       }
 
       // this is like our only public method, so we need to add the "+1" back in
@@ -113,7 +136,7 @@ public class TicTacToe {
       TicTacToe t = new TicTacToe();
       t.move(8);
       t.move(5);
-      t.move(3);
+      t.move(2);
 
       rc = t.move(t.getStrategicMove());
       System.out.println(rc);
