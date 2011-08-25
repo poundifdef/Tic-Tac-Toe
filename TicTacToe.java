@@ -70,24 +70,13 @@ public class TicTacToe {
    }
 
    private boolean moveInternal(int position) {
-      boolean boardIsFilled = true;
-      for (int i = 0; i < board.length; i++) {
-         if (board[i] == ' ') {
-            boardIsFilled = false;
-            break;
-         }
-      }
-
-      if (boardIsFilled) {
-         gameOver = true;
-      }
-
       if (board[position] == ' ') {
          board[position] = getTurn(true);
          turn++;
          return true;
       }
 
+      gameOver = true;
       return false;
    }
 
@@ -189,13 +178,16 @@ public class TicTacToe {
       TicTacToe t = new TicTacToe();
       t.move(6);
       t.moveStrategic();
-      t.move(8);
-      t.moveStrategic();
       t.move(1);
       t.moveStrategic();
       t.move(7);
       t.moveStrategic();
+      t.move(7);
+      t.moveStrategic();
       t.move(2);
+      t.moveStrategic();
+/*
+*/
 
 
       if (t.gameOver) {
