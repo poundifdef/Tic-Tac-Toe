@@ -1,11 +1,23 @@
 public class TicTacToe {
 
+      // list of winning tic tac toe moves. or, unique 3-tuple
+      // addends whose sum is 15
       int[][] winningMoves; 
+
+      // board state
       char[]  board; 
+
+      // lookup table to translate "normal" board numbers into magic square
+      // positions
       int[] transformedPositions = new int[] {7,0,5,2,4,6,3,8,1};
 
+      // which turn are we on?
       int turn;
+
+      // is the game over?
       public boolean gameOver = false;
+
+      // who is the winner?
       int winner = -1;
 
    public TicTacToe() {
@@ -16,6 +28,9 @@ public class TicTacToe {
       for (int i = 0; i < 9; i++)
          board[i] = ' ';
 
+      // enuerate all possible winning moves. faster/easier than coding
+      // combinatorial logic in java (which you wouldn't need to do in a
+      // language that wasn't as awful as this.)
       winningMoves = new int[8][3];
       winningMoves[0] = new int[] {0,5,7};
       winningMoves[1] = new int[] {2,4,6};
@@ -27,6 +42,10 @@ public class TicTacToe {
       winningMoves[7] = new int[] {3,4,5};
    }
 
+   // Checks to see if there is a potential win for a given player
+   // TODO: We don't really use the numMatching parameter as initially thought
+   //       so get rid of it
+   
    public int findPosition(char player, int numMatching) {
       if (numMatching == 2) {
          for (int i = 0; i < winningMoves.length; i++) { 
@@ -44,6 +63,7 @@ public class TicTacToe {
       return -1;
    }
 
+   // see if there is a playable winning position, for either player
    public int findWinner(boolean isMe) {
       char player = getTurn(isMe);
       int possiblePosition = findPosition(player, 2);
@@ -70,15 +90,18 @@ public class TicTacToe {
    }
 
    private boolean moveInternal(int position) {
+      // is the game over? then stop trying to move! :)
       if (position < 0) {
          gameOver = true;
          return false;
       }
 
+      // see if our desired space is empty
       if (board[position] == ' ') {
          board[position] = getTurn(true);
          turn++;
 
+         // is the board full? then game over.
          if (turn == 9) {
             gameOver = true;
          }
@@ -104,6 +127,7 @@ public class TicTacToe {
             );  
    }   
 
+   // Look for opponent's potential fork (opposite corners) and play accordingly
    public int avoidCornerTrap() {
       if ((board[1] == getTurn(false) && board[7] == getTurn(false)) ||
           (board[3] == getTurn(false) && board[5] == getTurn(false))) {
@@ -121,6 +145,9 @@ public class TicTacToe {
       int rc = -1;
       if (board[4] == ' ') return 4;
 
+      // if we play a piece in a given location, is there any possibility that
+      // we would win? If one of the 3 slots is 'blocked' by an opponent, then
+      // we don't even consider the move.
       for (int i = 0; i < winningMoves.length; i++) {
          int[] winningMove = winningMoves[i];
          if (board[winningMove[0]] == getTurn(false) ||
@@ -131,6 +158,8 @@ public class TicTacToe {
 
          }
 
+         // We only want to move into corners (for 3 potential wins),
+         // never to a "side"
          for (int move : winningMove) {
             if (move%2 == 1 && board[move] == ' ') {
                return move;
@@ -140,6 +169,8 @@ public class TicTacToe {
             
       }
 
+      // worst case, we don't find anything that either has the potential to win
+      // or is a corner piece, so we move to the first available space
       if (rc < 0) {
          for (int i = 0; i < board.length; i++) {
             if (board[i] == ' ') {
@@ -151,21 +182,30 @@ public class TicTacToe {
       return rc;
    }
 
+   // find the next best move
    public int getStrategicMove() {
       int rc = -1;
+
+      // can we win?
       rc = findWinner(true);
 
+      // yes we can! so declare the board game over
       if (rc >= 0) {
          this.gameOver = true;
          this.winner = this.turn;
       }
 
+      // otherwise we block opponent's win
       if (rc < 0) {
          rc = findWinner(false);
       }
+
+      // otherwise we avoid the fork possibility
       if (rc < 0) {
          rc = avoidCornerTrap();
       }
+
+      // otherwise we use our strategy of optimizing for a corner piece
       if (rc < 0) {
          rc = generalStrategy();
       }
