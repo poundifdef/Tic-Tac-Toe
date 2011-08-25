@@ -5,7 +5,7 @@ public class TicTacToe {
       int[] transformedPositions = new int[] {7,0,5,2,4,6,3,8,1};
 
       int turn;
-      boolean gameOver = false;
+      public boolean gameOver = false;
       int winner = -1;
 
    public TicTacToe() {
@@ -70,13 +70,22 @@ public class TicTacToe {
    }
 
    private boolean moveInternal(int position) {
+      if (position < 0) {
+         gameOver = true;
+         return false;
+      }
+
       if (board[position] == ' ') {
          board[position] = getTurn(true);
          turn++;
+
+         if (turn == 9) {
+            gameOver = true;
+         }
+
          return true;
       }
 
-      gameOver = true;
       return false;
    }
 
@@ -171,22 +180,22 @@ public class TicTacToe {
    }
 
    public char getWinner() {
-      return (winner < 0) ? ' ' : getTurn(true);
+      return (winner < 0) ? ' ' : getTurn(false);
    }
 
    public static void main(String[] args) {
       TicTacToe t = new TicTacToe();
-      t.move(6);
-      t.moveStrategic();
       t.move(1);
       t.moveStrategic();
-      t.move(7);
+      t.move(9);
       t.moveStrategic();
-      t.move(7);
+      t.move(8);
       t.moveStrategic();
-      t.move(2);
+      t.move(3);
       t.moveStrategic();
+      t.move(4);
 /*
+      t.moveStrategic();
 */
 
 

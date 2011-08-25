@@ -40,12 +40,12 @@ TicTacToe board = (TicTacToe)session.getAttribute("board");
 
    if (first.equals("computer")) {
         if (board.getTurn(true) == 'X') {
-           board.move(board.evaluateBestMove());
+           board.moveStrategic();
         }
    }
    else {
         if (board.getTurn(true) == 'O') {
-           board.move(board.evaluateBestMove());
+           board.moveStrategic();
         }
    }
 %>
@@ -57,7 +57,7 @@ out.println(board);
 </pre>
 
 <%
-if (board.isGameOver()) {
+if (board.gameOver) {
    out.println("The winner is: ");
    if (board.getWinner() == ' ') {
       out.println("a tie!");
