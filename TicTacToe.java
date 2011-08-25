@@ -5,6 +5,8 @@ public class TicTacToe {
       int[] transformedPositions = new int[] {7,0,5,2,4,6,3,8,1};
 
       int turn;
+      boolean gameOver = false;
+      int winner = -1;
 
    public TicTacToe() {
       turn = 0;
@@ -68,7 +70,17 @@ public class TicTacToe {
    }
 
    private boolean moveInternal(int position) {
-      //position--;
+      boolean boardIsFilled = true;
+      for (int i = 0; i < board.length; i++) {
+         if (board[i] == ' ') {
+            boardIsFilled = false;
+            break;
+         }
+      }
+
+      if (boardIsFilled) {
+         gameOver = true;
+      }
 
       if (board[position] == ' ') {
          board[position] = getTurn(true);
@@ -151,6 +163,11 @@ public class TicTacToe {
       int rc = -1;
       rc = findWinner(true);
 
+      if (rc >= 0) {
+         this.gameOver = true;
+         this.winner = this.turn;
+      }
+
       if (rc < 0) {
          rc = findWinner(false);
       }
@@ -161,27 +178,36 @@ public class TicTacToe {
          rc = generalStrategy();
       }
 
-      // this is like our only public method, so we need to add the "+1" back in
       return rc;
    }
 
-   public static void main(String args[]) {
+   public char getWinner() {
+      return (winner < 0) ? ' ' : getTurn(true);
+   }
 
-      boolean rc = false;
-
+   public static void main(String[] args) {
       TicTacToe t = new TicTacToe();
+      t.move(6);
+      t.moveStrategic();
+      t.move(8);
+      t.moveStrategic();
+      t.move(1);
+      t.moveStrategic();
+      t.move(7);
+      t.moveStrategic();
+      t.move(2);
 
-      rc = t.move(3);
-      rc = t.moveStrategic();
-      rc = t.move(8);
-      rc = t.moveStrategic();
-      rc = t.move(9);
-      rc = t.moveStrategic();
-      rc = t.move(4);
-      rc = t.moveStrategic();
-      rc = t.move(1);
+
+      if (t.gameOver) {
+         System.out.print("Winner: ");
+         if (t.getWinner() == ' ')
+            System.out.println("Tie");
+         else
+            System.out.println(t.getWinner());
+      }   
 
       System.out.println(t);
-   }
+   }   
+
 
 }
